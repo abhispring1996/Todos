@@ -8,6 +8,10 @@ public class User {
 
     // TODO -> private members of Parent class also contribute to memory in child class
 
+    public User (){
+        System.out.println("Here in the parent class");
+    }
+
     public void updateEmail(String email){
         this.email=email;
     }

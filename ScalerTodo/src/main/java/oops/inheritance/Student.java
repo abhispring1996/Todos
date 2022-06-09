@@ -1,7 +1,7 @@
 package oops.inheritance;
 
 
-public class Student {
+public class Student extends User{
 
     private String batch;
     private double psp;
