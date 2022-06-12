@@ -13,6 +13,8 @@ public class Main {
       // TODO -> Method Overriding -> At runtime we get to know about the actual object whereas at compile time we are only
         // aware of the ref object
 
-      // TODO -> Diamond problem -> Class extending two classes can't identify whose parent method to call
+      // TODO -> Diamond problem -> Class extending two classes can't identify whose parent method to call incase of same method
+      // TODO -> Interfaces(blueprint of behaviour) -> help in case where need to multiple reusability for ex Mammals -> Herbivore -> Animals
+
     }
 }
