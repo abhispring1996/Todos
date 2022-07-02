@@ -1,6 +1,7 @@
 package designpatterns;
 
 import designpatterns.prototype.Bird;
+import designpatterns.prototype.BirdRegistry;
 import designpatterns.prototype.Crow;
 import designpatterns.prototype.Sparrow;
 
@@ -41,5 +42,24 @@ public class MainClass {
         for(Bird parent : birdsList){
             childrenBirds.add(parent.copy());
         }
+
+        Sparrow longLeggedSparrow = new Sparrow();
+        longLeggedSparrow.setLegSize("200");
+
+        Crow sweetSoundCrow = new Crow();
+        sweetSoundCrow.setSound("KooKoo");
+
+        BirdRegistry birdRegistry = new BirdRegistry();
+        birdRegistry.registerBird("LongLeggedSparrow",longLeggedSparrow);
+        birdRegistry.registerBird("SweetSoundCrow",sweetSoundCrow);
+
+        List<String> birdOfTypes= List.of("LongLeggedSparrow","SweetSoundCrow");
+        List<Bird> reqBirds = new ArrayList<>();
+
+        for(String birdType : birdOfTypes){
+          reqBirds.add(BirdRegistry.birdMap.get(birdType));
+        }
+
+
     }
 }
