@@ -1,2 +1,8 @@
-package designpatterns.decorator;public interface IceCreamCone {
+package designpatterns.decorator;
+
+public interface IceCreamCone {
+
+    long getCost();
+
+    String getConstituents();
 }

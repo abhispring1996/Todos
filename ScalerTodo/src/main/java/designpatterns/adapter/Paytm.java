@@ -1,4 +1,4 @@
-package designpatterns.strategy;
+package designpatterns.adapter;
 
 // TODO -> Adapter Pattern to connect with Third party classes
 public class Paytm {

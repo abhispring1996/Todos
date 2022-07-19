@@ -1,4 +1,4 @@
-package designpatterns.strategy;
+package designpatterns.adapter;
 
 public interface PaymentGateway {
 

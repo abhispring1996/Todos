@@ -1,4 +1,4 @@
-package designpatterns.strategy.razorpay;
+package designpatterns.adapter.razorpay;
 
 public class RazorPayGateway {
 
