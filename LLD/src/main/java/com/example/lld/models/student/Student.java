@@ -1,6 +1,7 @@
-package com.example.lld.models;
+package com.example.lld.models.student;
 
 
+import com.example.lld.models.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Student extends BaseModel{
+public class Student extends BaseModel {
 
     private String name;
     private String address;

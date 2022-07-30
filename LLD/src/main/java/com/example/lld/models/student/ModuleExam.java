@@ -1,11 +1,13 @@
-package com.example.lld.models;
+package com.example.lld.models.student;
+
+import com.example.lld.models.BaseModel;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.util.Date;
 
 @Entity
-public class ModuleExam extends BaseModel{
+public class ModuleExam extends BaseModel {
 
     // ME:M
     // 1:1
