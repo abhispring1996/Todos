@@ -4,9 +4,11 @@ import com.example.ratelimiter.models.*;
 
 public interface IRateLimitService {
 
-    boolean isAccessGranted(String clientId);
+    ValidateClientResponse isAccessGranted(String clientId);
 
-    UpdateConfigResponse createOrUpdateRateLimitConfig(UpdateConfigRequest updateConfigRequest);
+    CreateOrUpdateConfigResponse createOrUpdateRateLimitConfig(CreateOrUpdateConfigRequest createOrUpdateConfigRequest);
 
     ActiveConfigResponse fetchActiveConfig();
+
+    CreditsRefilResponse refillCredits(CreditsRefillRequest creditsRefillRequest);
 }

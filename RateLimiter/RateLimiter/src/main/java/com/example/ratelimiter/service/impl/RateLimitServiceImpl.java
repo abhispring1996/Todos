@@ -1,12 +1,10 @@
 package com.example.ratelimiter.service.impl;
 
+import com.example.ratelimiter.constants.ValidationTypes;
 import com.example.ratelimiter.entity.ClientInformationEntity;
 import com.example.ratelimiter.entity.RateLimitConfigEntity;
 import com.example.ratelimiter.handler.RedisHandler;
-import com.example.ratelimiter.models.ActiveConfigResponse;
-import com.example.ratelimiter.models.RateLimitConfigInfo;
-import com.example.ratelimiter.models.UpdateConfigRequest;
-import com.example.ratelimiter.models.UpdateConfigResponse;
+import com.example.ratelimiter.models.*;
 import com.example.ratelimiter.repository.ClientInformationRepository;
 import com.example.ratelimiter.repository.RateLimiterRepository;
 import com.example.ratelimiter.service.IRateLimitService;
@@ -36,61 +34,84 @@ public class RateLimitServiceImpl implements IRateLimitService {
     }
 
     @Override
-    public boolean isAccessGranted(String clientId) {
+    public ValidateClientResponse isAccessGranted(String clientId) {
+
+        ValidateClientResponse validateClientResponse = new ValidateClientResponse();
+        validateClientResponse.setValidationTypes(ValidationTypes.ACCESS_GRANTED);
+        validateClientResponse.setMessage(ValidationTypes.ACCESS_GRANTED.getErrorMessage());
 
         ClientInformationEntity clientInformation = clientInformationRepository.findByClientId(clientId);
 
+        // validate whether client is onboarded
         if (clientInformation == null) {
-            return false;
+            validateClientResponse.setValidationTypes(ValidationTypes.ClIENT_NOT_ONBOARDED);
+            validateClientResponse.setMessage(ValidationTypes.ClIENT_NOT_ONBOARDED.getErrorMessage());
+            return validateClientResponse;
         }
 
         RateLimitConfigEntity config = clientInformation.getConfig();
 
+        // check if key is already set or not and if limit of number of requests has breached
         if (!redisHandler.setIfAbsent(clientId, config.getNumberOfRequests() - 1, config.getTimeIntervalInSecs())
                 && redisHandler.decrementKey(clientId) < 0) {
-            return false;
+            validateClientResponse.setValidationTypes(ValidationTypes.TOO_MANY_REQUESTS);
+            validateClientResponse.setMessage(ValidationTypes.TOO_MANY_REQUESTS.getErrorMessage());
+            return validateClientResponse;
         }
-        return true;
+
+        long quota = clientInformation.getCredits()-1;
+
+        // check if credits have been totally burnt or not
+        if(quota<0){
+            validateClientResponse.setValidationTypes(ValidationTypes.CREDITS_BURN_EXCEEDED);
+            validateClientResponse.setMessage(ValidationTypes.CREDITS_BURN_EXCEEDED.getErrorMessage());
+            return validateClientResponse;
+        }
+        clientInformation.setCredits(quota);
+        clientInformationRepository.save(clientInformation);
+        validateClientResponse.setAccessGranted(true);
+        return validateClientResponse;
     }
 
 
     @Override
     @Transactional
-    public UpdateConfigResponse createOrUpdateRateLimitConfig(UpdateConfigRequest updateConfigRequest) {
+    public CreateOrUpdateConfigResponse createOrUpdateRateLimitConfig(CreateOrUpdateConfigRequest createOrUpdateConfigRequest) {
 
-        UpdateConfigResponse updateConfigResponse = new UpdateConfigResponse();
-        updateConfigResponse.setStatus("F");
+        CreateOrUpdateConfigResponse createOrUpdateConfigResponse = new CreateOrUpdateConfigResponse();
+        createOrUpdateConfigResponse.setStatus("F");
 
-        if (!updateConfigRequest.isDefaultConfigEnabled()
-                && updateConfigRequest.getNumberOfRequests() == 0 && updateConfigRequest.getTimeIntervalInSecs() == 0) {
-            updateConfigResponse.setMessage("No Configuration Parameter provided");
-            return updateConfigResponse;
+        // if no reload config is provided
+        if (!createOrUpdateConfigRequest.isDefaultConfigEnabled()
+                && createOrUpdateConfigRequest.getNumberOfRequests() == 0 && createOrUpdateConfigRequest.getTimeIntervalInSecs() == 0) {
+            createOrUpdateConfigResponse.setMessage("No Configuration Parameter provided");
+            return createOrUpdateConfigResponse;
         }
 
 
-        ClientInformationEntity clientInformation = clientInformationRepository.findByClientId(updateConfigRequest.getClientId());
+        ClientInformationEntity clientInformation = clientInformationRepository.findByClientId(createOrUpdateConfigRequest.getClientId());
 
         if (null == clientInformation) {
             clientInformation = new ClientInformationEntity();
-            clientInformation.setClientId(updateConfigRequest.getClientId());
+            clientInformation.setClientId(createOrUpdateConfigRequest.getClientId());
         }
 
         int numberOfRequests = 10;
         int timeIntervalInSecs = 60;
 
         RateLimitConfigEntity rateLimitConfig = rateLimiterRepository.
-                findByNumberOfRequestsAndTimeIntervalInSecs(updateConfigRequest.getNumberOfRequests(),
-                        updateConfigRequest.getTimeIntervalInSecs());
+                findByNumberOfRequestsAndTimeIntervalInSecs(createOrUpdateConfigRequest.getNumberOfRequests(),
+                        createOrUpdateConfigRequest.getTimeIntervalInSecs());
 
         Long configId = 00L; // Default config
 
         // If default config is not required
-        if (!updateConfigRequest.isDefaultConfigEnabled()) {
+        if (!createOrUpdateConfigRequest.isDefaultConfigEnabled()) {
 
             if (null == rateLimitConfig) {
                 rateLimitConfig = new RateLimitConfigEntity();
-                rateLimitConfig.setNumberOfRequests(updateConfigRequest.getNumberOfRequests());
-                rateLimitConfig.setTimeIntervalInSecs(updateConfigRequest.getTimeIntervalInSecs());
+                rateLimitConfig.setNumberOfRequests(createOrUpdateConfigRequest.getNumberOfRequests());
+                rateLimitConfig.setTimeIntervalInSecs(createOrUpdateConfigRequest.getTimeIntervalInSecs());
             }
             rateLimitConfig.setActive(true);
             rateLimitConfig = rateLimiterRepository.save(rateLimitConfig);
@@ -99,15 +120,15 @@ public class RateLimitServiceImpl implements IRateLimitService {
             timeIntervalInSecs = rateLimitConfig.getTimeIntervalInSecs();
         }
 
-
+        clientInformation.setCredits(clientInformation.getCredits()+ createOrUpdateConfigRequest.getCredits());
         clientInformation.setConfig(rateLimitConfig);
         clientInformationRepository.save(clientInformation);
 
-        redisHandler.set(updateConfigRequest.getClientId(), numberOfRequests, timeIntervalInSecs);
-        updateConfigResponse.setReferenceId(configId);
-        updateConfigResponse.setStatus("S");
-        updateConfigResponse.setMessage("Rate Limit Config Reloaded successfully");
-        return updateConfigResponse;
+        redisHandler.set(createOrUpdateConfigRequest.getClientId(), numberOfRequests, timeIntervalInSecs);
+        createOrUpdateConfigResponse.setReferenceId(configId);
+        createOrUpdateConfigResponse.setStatus("S");
+        createOrUpdateConfigResponse.setMessage("Rate Limit Config Reloaded successfully");
+        return createOrUpdateConfigResponse;
     }
 
     @Override
@@ -129,5 +150,26 @@ public class RateLimitServiceImpl implements IRateLimitService {
         activeConfigResponse.setRateLimitConfigInfoList(rateLimitConfigInfoList);
 
         return activeConfigResponse;
+    }
+
+    @Override
+    public CreditsRefilResponse refillCredits(CreditsRefillRequest creditsRefillRequest) {
+
+        CreditsRefilResponse creditsRefilResponse = new CreditsRefilResponse();
+        creditsRefilResponse.setStatus("S");
+        creditsRefilResponse.setMessage("Credits Refilled SuccessFully");
+
+        ClientInformationEntity clientInformation = clientInformationRepository.findByClientId(creditsRefillRequest.getClientId());
+
+        if(null==clientInformation){
+            creditsRefilResponse.setMessage(ValidationTypes.ClIENT_NOT_ONBOARDED.getErrorMessage());
+            creditsRefilResponse.setMessage("F");
+        }
+
+        clientInformation.setCredits(clientInformation.getCredits()+creditsRefillRequest.getCredits());
+
+        clientInformationRepository.save(clientInformation);
+
+        return creditsRefilResponse;
     }
 }

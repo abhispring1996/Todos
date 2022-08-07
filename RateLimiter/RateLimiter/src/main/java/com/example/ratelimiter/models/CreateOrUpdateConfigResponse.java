@@ -3,7 +3,7 @@ package com.example.ratelimiter.models;
 import lombok.Data;
 
 @Data
-public class UpdateConfigResponse {
+public class CreateOrUpdateConfigResponse {
 
     private long referenceId;
     private String status;

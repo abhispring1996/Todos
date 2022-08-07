@@ -8,10 +8,12 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UpdateConfigRequest {
+public class CreateOrUpdateConfigRequest {
 
     @NotBlank
     private String clientId;
+
+    private Long credits;
 
     private int numberOfRequests;
 

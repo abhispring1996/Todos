@@ -18,6 +18,9 @@ public class ClientInformationEntity extends BaseEntity{
     @Column(name = "client_id")
     private String clientId;
 
+    @Column(name = "credits")
+    private long credits;
+
     @ManyToOne
     @JoinColumn(name = "config_id",nullable = false)
     private RateLimitConfigEntity config;

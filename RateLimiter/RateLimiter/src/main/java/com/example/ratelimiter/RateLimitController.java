@@ -3,7 +3,6 @@ package com.example.ratelimiter;
 import com.example.ratelimiter.models.*;
 import com.example.ratelimiter.service.IRateLimitService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,16 +21,12 @@ public class RateLimitController {
     }
 
 
-    @GetMapping("/validate/{clientId}")
-    public ResponseEntity<Object> isAccessGranted(@PathVariable(name = "clientId") String clientId){
+    @GetMapping(path = "/validate/{clientId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ValidateClientResponse> isAccessGranted(@PathVariable(name = "clientId") String clientId) {
 
-        int status = HttpStatus.TOO_MANY_REQUESTS.value();
+        ValidateClientResponse validateClientResponse = rateLimitServiceImpl.isAccessGranted(clientId);
 
-        if(rateLimitServiceImpl.isAccessGranted(clientId)){
-            status = HttpStatus.OK.value();
-        }
-
-        return ResponseEntity.status(status).build();
+        return ResponseEntity.status(validateClientResponse.getValidationTypes().getHttpStatus()).body(validateClientResponse);
 
     }
 
@@ -39,15 +34,16 @@ public class RateLimitController {
     /**
      * To reload rate limit configs
      *
-     * @param updateConfigRequest
+     * @param createOrUpdateConfigRequest
      * @return
      */
     @PostMapping(path = "/updateConfigs", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UpdateConfigResponse> updateConfigs(@RequestBody @Validated UpdateConfigRequest updateConfigRequest) {
+    public ResponseEntity<CreateOrUpdateConfigResponse> updateConfigs(@RequestBody
+                                                                      @Validated CreateOrUpdateConfigRequest createOrUpdateConfigRequest) {
 
-        UpdateConfigResponse updateConfigResponse = rateLimitServiceImpl.createOrUpdateRateLimitConfig(updateConfigRequest);
+        CreateOrUpdateConfigResponse createOrUpdateConfigResponse = rateLimitServiceImpl.createOrUpdateRateLimitConfig(createOrUpdateConfigRequest);
 
-        return ResponseEntity.ok().body(updateConfigResponse);
+        return ResponseEntity.ok().body(createOrUpdateConfigResponse);
     }
 
     /**
@@ -61,6 +57,20 @@ public class RateLimitController {
         ActiveConfigResponse activeConfigResponse = rateLimitServiceImpl.fetchActiveConfig();
 
         return ResponseEntity.ok().body(activeConfigResponse);
+    }
+
+    /**
+     * To refill credits for a client
+     *
+     * @param creditsRefillRequest
+     * @return
+     */
+    @GetMapping(path = "/refillCredits", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CreditsRefilResponse> refillCredits(@RequestBody CreditsRefillRequest creditsRefillRequest) {
+
+        CreditsRefilResponse creditsRefilResponse = rateLimitServiceImpl.refillCredits(creditsRefillRequest);
+
+        return ResponseEntity.ok().body(creditsRefilResponse);
     }
 
 }
