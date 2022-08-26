@@ -1,7 +1,7 @@
-package com.example.lld.models.student;
+package com.example.lld.scaler.models.student;
 
 
-import com.example.lld.models.BaseModel;
+import com.example.lld.scaler.models.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 

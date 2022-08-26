@@ -1,4 +1,4 @@
-package com.example.lld.models;
+package com.example.lld.scaler.models;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
