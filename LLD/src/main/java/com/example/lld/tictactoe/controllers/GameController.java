@@ -44,7 +44,7 @@ public class GameController {
         for(List<Cell> cells: game.getBoard().getBoard()){
 
             for(Cell cell : cells) {
-                System.out.print("| " + cell.getSymbol().+" |");
+//                System.out.print("| " + cell.getSymbol().+" |");
             }
             System.out.println("game = " + game);
         }
