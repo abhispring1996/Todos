@@ -24,7 +24,6 @@ public class StatsdController {
 
         for (int i = 0; i < 34; i++) {
             statsDClient.incrementCounter("example_metric.increment", new String[]{"environment:dev"});
-            statsDClient.re
             Thread.sleep(1000);
         }
         return new ResponseEntity<>("Statsd published Successfully", HttpStatus.OK);
