@@ -22,9 +22,9 @@ public class StatsdController {
         List<String> tags = new ArrayList<>();
         tags.add("application : " + "DBMI");
 
-        for (int i = 0; i < 34; i++) {
+        for (int i = 0; i < 1000; i++) {
             statsDClient.incrementCounter("example_metric.increment", new String[]{"environment:dev"});
-            Thread.sleep(1000);
+            statsDClient.recordExecutionTime("appmi.latency",100, new String[]{"environment:dev"});
         }
         return new ResponseEntity<>("Statsd published Successfully", HttpStatus.OK);
     }

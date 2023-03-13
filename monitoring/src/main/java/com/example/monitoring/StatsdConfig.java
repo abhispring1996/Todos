@@ -12,7 +12,7 @@ public class StatsdConfig {
     public StatsDClient statsDClient() {
         return new NonBlockingStatsDClientBuilder()
                 .prefix("statsd")
-                .hostname("127.0.0.1")
+                .hostname("localhost")
                 .port(8125)
                 .build();
     }
