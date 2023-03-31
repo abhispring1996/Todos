@@ -1,8 +1,14 @@
 package com.example.revision.arrays;
 
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class ArrayTest {
 
@@ -114,11 +120,103 @@ public class ArrayTest {
         return ret;
     }
 
-    public static void main(String[] args) {
-        System.out.println(firstMissingNumber(new int[]{100, 2, 3, 1, -1}));
-        System.out.println(firstMissingNumber(new int[]{1, 2, 3, 4, 5}));
-        System.out.println(firstMissingNumber(new int[]{100, -2, -3, 0, -1}));
-        System.out.println(firstMissingNumber(new int[]{2, 3, 1, 2}));
+    /**
+     * To find maxWaterBetweenContainers
+     * @param heights
+     * @return
+     */
+    public static int maxWaterBetweenContainers(int[] heights) {
 
+        int maxWaterTrapped = 0;
+
+        // brute force -> try every combo standing at each container
+        // TC : O(n^2) SC : O(1)
+        for (int i = 0; i < heights.length; i++) {
+            for (int j = i + 1; j < heights.length; j++) {
+                int waterTrapped = Math.min(heights[i], heights[j]) * (j - i);
+                maxWaterTrapped = Math.max(maxWaterTrapped, waterTrapped);
+            }
+        }
+
+
+        // optimal solution -> use two pointer solution
+        // choice -> try moving towards max min height so that multiplication gives more value
+        // TC : O(n) SC : O(1)
+
+        int low = 0;
+        int high = heights.length - 1;
+
+        while (low < high) {
+
+            int waterTrapped = Math.min(heights[low], heights[high]) * (high - low);
+            maxWaterTrapped = Math.max(maxWaterTrapped, waterTrapped);
+            // if height on right side is greater,then shift to left pointer to right to find larger left and maximise product
+            // if we move right pointer to left then either we will have small right height or big right height thus no improvement
+            if (heights[low] < heights[high]) {
+                low++;
+            } else {
+                high--;
+            }
+
+        }
+
+        return maxWaterTrapped;
+    }
+
+    /**
+     * To print spiral matrix
+     * @param nums
+     */
+    public static void spiralMatrix(int [][] nums){
+        int rows = nums.length-1;
+        int cols = nums[0].length-1;
+        int top = 0;
+        int right = cols;
+        int left = 0;
+        int bottom = rows;
+
+        int []ret = new int[(rows+1)*(cols+1)];
+        int index =0;
+
+        while(left<=right && top<=bottom){
+            // left to right
+            for(int i=left;i<=right;i++){
+                ret[index++] = nums[top][i];
+            }
+
+            top++;
+            // top to bottom
+            for(int i=top;i<=bottom;i++){
+                ret[index++] = nums[i][right];
+            }
+
+            right--;
+
+            // right to left
+            for(int i=right;i>=left && top<=bottom;i--){
+                ret[index++] = nums[bottom][i];
+            }
+
+            bottom--;
+
+            // bottom to top
+            for(int i=bottom;i>=top && left<=right;i--){
+                ret[index++] = nums[i][left];
+            }
+
+            left++;
+        }
+
+        System.out.println(Arrays.toString(ret));
+    }
+
+
+    public static void main(String[] args) {
+
+        int [][] nums = {{1,2,3,4},
+                         {5,6,7,8},
+                         {9,10,11,12}};
+
+        spiralMatrix(nums);
     }
 }
