@@ -1,5 +1,10 @@
 package com.example.revision.search;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class BinaryTest {
 
     /**
@@ -42,8 +47,46 @@ public class BinaryTest {
         return totalWaterTrapped;
     }
 
+    /**
+     * To find triplets -> nums[i] + nums[j] + nums[k] == 0
+     * @param nums
+     */
+    public static void threeSum(int [] nums){
+
+        Arrays.sort(nums);
+        Set<List<Integer>> ret = new HashSet<>();
+
+        for(int i=0;i<nums.length;i++){
+            int target = 0 - nums[i];
+            // two sum using two pointers
+            int low = i+1;
+            int high = nums.length-1;
+
+            while(low<high){
+
+                int currSum = nums[low] + nums[high];
+
+                if(currSum==target){
+                    List<Integer> triplets = Arrays.asList(nums[i],nums[low],nums[high]);
+                    ret.add(triplets);
+                    break;
+                }else if(currSum > target){
+                    high--;
+                }else{
+                    low++;
+                }
+
+            }
+
+        }
+
+        // TC -> O(nlogn + n^2) -> O(N^2)
+        // SC -> O(No of triplets*3)
+        System.out.println(ret);
+    }
+
 
     public static void main(String[] args) {
-
+        threeSum(new int[]{0,0,0});
     }
 }

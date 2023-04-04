@@ -210,13 +210,87 @@ public class ArrayTest {
         System.out.println(Arrays.toString(ret));
     }
 
+    /**
+     * To find subMatrix for Q queries
+     * @param nums
+     * @param B
+     * @param C
+     * @param D
+     * @param E
+     * @return
+     */
+    public static int[] subMatrixSum(int [][] nums,int [] B,int [] C ,int [] D,int []E) {
+
+        int [] subMatrixSum = new int[B.length];
+
+        // Brute force -> to do N^2 traversal for Q queries -> O(Q*(N^2))
+
+        // Optimal approach -> to construct prefix sum for matrix then calculating queries in O(1)
+        // TC   ->  O(N^2 + Q*1) -> O(N^2)
+        // construct row sum
+        for (int row = 0; row < nums.length; row++) {
+
+            for (int col = 1; col < nums[row].length; col++) {
+                nums[row][col] += nums[row][col - 1];
+            }
+        }
+
+        // construct column sum
+        for (int col = 0; col < nums[0].length; col++) {
+
+            for (int row = 1; row < nums.length; row++) {
+                nums[row][col] += nums[row - 1][col];
+            }
+        }
+
+        // rather than doing two iterations for calculating row sum and column
+        // we can take a new array and construct that but increase space complexity to O(N^2)
+
+        int [][] dp = new int[nums.length+1][nums[0].length+1];
+
+        for(int i =1;i< dp.length;i++){
+            for(int j=1;j<dp[i].length;j++){
+                dp[i][j] = dp[i-1][j] + dp[i][j-1] + nums[i-1][j-1] - dp[i-1][j-1];
+            }
+        }
+
+        System.out.println(Arrays.deepToString(nums));
+        System.out.println(Arrays.deepToString(dp));
+
+        for (int q = 0; q < B.length; q++) {
+
+            int topRow = B[q] - 1;
+            int topCol = C[q] - 1;
+            int bottomRow = D[q] - 1;
+            int bottomCol = E[q] - 1;
+
+            int currSum = nums[bottomRow][bottomCol];
+            // removing row above topRow
+            if (topRow > 0) {
+                currSum -= nums[topRow - 1][bottomCol];
+            }
+            // removing col before topCol
+            if (topCol > 0) {
+                currSum -= nums[bottomRow][topCol - 1];
+            }
+            // removing twice added part
+            if (topCol > 0 && topRow > 0) {
+                currSum += nums[topRow - 1][topCol - 1];
+            }
+
+            subMatrixSum[q] = currSum;
+        }
+
+        return subMatrixSum;
+    }
+
 
     public static void main(String[] args) {
 
-        int [][] nums = {{1,2,3,4},
-                         {5,6,7,8},
-                         {9,10,11,12}};
+        int [][] nums = {{1,2,3},
+                         {4,5,6},
+                         {7,8,9}};
 
-        spiralMatrix(nums);
+        System.out.println(Arrays.toString(subMatrixSum(nums,new int[]{1,2},new int[]{1,2},new int[]{2,3},new int[]{2,3})));
     }
 }
