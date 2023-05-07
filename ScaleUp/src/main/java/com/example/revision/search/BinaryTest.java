@@ -189,17 +189,33 @@ public class BinaryTest {
     public static int findSquareRoot(int number){
 
         // for ex -> 9
-        int low =1;
-        int high =9;
+        long low =0;
+        long high =number;
 
-        while()
+        long ansSqRoot = -1;
+        // TC -> O(log(number))
+        // SC -> O(1)
+        while(low<=high){
 
+            long mid = low +(high-low)/2;
 
+            long square = mid*mid;
 
+            if(square == number){
+                return (int)mid;
+            }
+            else if(square >number){
+                high= mid-1;
+            }else {
+                ansSqRoot = mid;
+                low = mid + 1;
+            }
+        }
+        return (int)ansSqRoot;
     }
 
 
     public static void main(String[] args) {
-        System.out.println(findPeakElement(new int[]{1,2,3,1}));
+        System.out.println(findSquareRoot(11));
     }
 }

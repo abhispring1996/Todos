@@ -1,7 +1,10 @@
 package com.example.revision.hashing;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,9 +82,33 @@ public class HashTest {
 
     }
 
+    /**
+     * To group anagrams
+     * @param words
+     * @return
+     */
+    public static List<List<String>> groupAnagrams(String [] words){
+
+        Map<String,List<String>> map = new HashMap<>();
+        // TC : O(ArrayLen*wordLen)
+        for(String word : words){
+
+            char [] freq = new char[26];
+            // will create a key using the freq array
+            for(char c : word.toCharArray()){
+                freq[c-'a']++;
+            }
+            String key = new String(freq);
+            List<String> anagramList = map.getOrDefault(key,new ArrayList<>());
+            anagramList.add(word);
+            map.put(key,anagramList);
+        }
+        return new ArrayList<>(map.values());
+    }
+
 
 
     public static void main(String[] args) {
-        System.out.println(isSumPresent(new int[]{3, 34, 4, 12, 5, 2},30));
+        System.out.println(groupAnagrams(new String[]{"eat","tea","tan","ate","nat","bat"}));
     }
 }

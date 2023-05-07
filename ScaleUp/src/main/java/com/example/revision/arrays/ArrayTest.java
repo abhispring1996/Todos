@@ -2,6 +2,9 @@ package com.example.revision.arrays;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ArrayTest {
 
@@ -317,12 +320,54 @@ public class ArrayTest {
         return subMatrixSum;
     }
 
+    /**
+     * To get k frequent elements
+     * @param nums
+     * @param k
+     * @return
+     */
+    public static List<Integer> freqElements(int [] nums, int k) {
+
+        List<Integer>[] bucket = new List[nums.length+1];
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for (int i : nums) {
+            map.put(i, map.getOrDefault(i, 0) + 1);
+        }
+        // We can use a Priority queue also but it will take O(No Of Elements * log(size of Unique Elements)) time
+        // Do better approach will be to use a bucket sort technique
+        for (Integer key : map.keySet()) {
+
+            int freq = map.get(key);
+
+            if (bucket[freq] == null) {
+                bucket[freq] = new ArrayList<>();
+            }
+            bucket[freq].add(key);
+        }
+
+        List<Integer> ret = new ArrayList<>();
+        // TC : O(bucket.length + Elements in one bucket) -> O(bucket.length)
+        for (int i = bucket.length - 1; i >= 0; i--) {
+
+            if (bucket[i] != null) {
+
+                for (int ele : bucket[i]) {
+                    if (k-- <= 0) return ret;
+                    ret.add(ele);
+                }
+            }
+        }
+        return ret;
+    }
+
     public static void main(String[] args) {
 
         int [][] nums = {{7,3},
                          {2,1},
                          {4,9}};
 
-//        System.out.println(getMinDiffArray(3,2,nums));
+        System.out.println(freqElements(new int[]{1,1,1,1,1},2));
     }
 }
