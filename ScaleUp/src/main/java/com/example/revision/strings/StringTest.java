@@ -1,6 +1,8 @@
 package com.example.revision.strings;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StringTest {
@@ -27,7 +29,21 @@ public class StringTest {
         }
         return true;
     }
+
+    private static String constructNullIgnoreWhereClause(List<String> columns){
+
+        StringBuilder whereCondition = new StringBuilder();
+        int index = 0;
+
+        while(index < columns.size()-1){
+            whereCondition.append(columns.get(index)+" IS NOT NULL "+"AND ");
+            index++;
+        }
+        whereCondition.append(columns.get(index)+" IS NOT NULL ");
+        return whereCondition.toString();
+    }
+
     public static void main(String[] args) {
-        System.out.println(checkAnagrams("rat","car"));
+        System.out.println(constructNullIgnoreWhereClause(Arrays.asList("Abhi","cHINU")));
     }
 }
