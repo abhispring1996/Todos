@@ -9,14 +9,14 @@ public class Database {
 
       }
 
-      public static Database getInstance(){
+      public static Database getInstance() {
 
-            if(null==instance){
+            if (null == instance) {
 
-                  synchronized (obj){
+                  synchronized (obj) {
 
-                        if(null==instance){
-                             return new Database();
+                        if (null == instance) {
+                              return new Database();
                         }
                   }
                   return new Database();
