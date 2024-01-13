@@ -8,11 +8,12 @@ import java.util.Map;
 public class StringTest {
     /**
      * To check whether if two strings are anagrams
+     *
      * @param a
      * @param b
      * @return
      */
-    public static boolean checkAnagrams(String a,String b){
+    public static boolean checkAnagrams(String a, String b) {
         Map<Character, Integer> map = new HashMap<>();
 
         if (a.length() != b.length()) return false;
@@ -30,20 +31,8 @@ public class StringTest {
         return true;
     }
 
-    private static String constructNullIgnoreWhereClause(List<String> columns){
 
-        StringBuilder whereCondition = new StringBuilder();
-        int index = 0;
-
-        while(index < columns.size()-1){
-            whereCondition.append(columns.get(index)+" IS NOT NULL "+"AND ");
-            index++;
-        }
-        whereCondition.append(columns.get(index)+" IS NOT NULL ");
-        return whereCondition.toString();
-    }
 
     public static void main(String[] args) {
-        System.out.println(constructNullIgnoreWhereClause(Arrays.asList("Abhi","cHINU")));
     }
 }
