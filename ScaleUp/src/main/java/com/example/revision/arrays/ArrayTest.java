@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class ArrayTest {
 
@@ -361,6 +362,46 @@ public class ArrayTest {
         }
         return ret;
     }
+
+    /**
+     * https://leetcode.com/problems/replace-elements-with-greatest-element-on-right-side/
+     *
+     * Given an array arr, replace every element in that array with the greatest element among the elements to its right, and replace the last element with -1.
+     *
+     * After doing so, return the array.
+     * @param arr
+     * @return
+     */
+    public int[] replaceElements(int[] arr) {
+
+        // This the new algo that I have come up with though it is more space consuming
+        int [] ret = new int[arr.length];
+
+        ret[arr.length-1] = -1;
+
+        Stack<Integer> numStack = new Stack<>();
+        numStack.push(arr[arr.length-1]);
+
+        //Input: arr = [17,18,5,4,6,1]
+        //Output: [18,6,6,6,1,-1]
+
+        for(int i=arr.length-2;i>=0;i--){
+
+            ret[i] = numStack.peek();
+
+            // emptying the stack to keep the greater element on the right
+            while(!numStack.isEmpty() && arr[i] > numStack.peek()){
+                numStack.pop();
+            }
+
+            if(numStack.isEmpty()){
+                numStack.push(arr[i]);
+            }
+        }
+
+        return ret;
+    }
+
 
     public static void main(String[] args) {
 

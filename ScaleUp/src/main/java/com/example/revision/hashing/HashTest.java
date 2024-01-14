@@ -106,9 +106,23 @@ public class HashTest {
         return new ArrayList<>(map.values());
     }
 
+    public static boolean containsDuplicate(int[] nums) {
+
+        Set<Integer> numsSet = new HashSet<>();
+
+        for (int i : nums) {
+
+            if (!numsSet.add(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 
     public static void main(String[] args) {
-        System.out.println(groupAnagrams(new String[]{"eat","tea","tan","ate","nat","bat"}));
+//        System.out.println(groupAnagrams(new String[]{"eat","tea","tan","ate","nat","bat"}));
+        containsDuplicate(new int[]{1,2,3,4,1});
     }
 }
