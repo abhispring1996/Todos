@@ -11,16 +11,18 @@ public class ArrayTest {
 
     /**
      * Find the max value for f(i,j) = |A[i]-A[j]| +|i-j|
+     *
      * @param nums
      * @return
      */
 
-    public static int maxDiff(int [] nums){
+    public static int maxDiff(int[] nums) {
         return 0;
     }
 
     /**
      * To find first missing positive number
+     *
      * @param nums
      * @return
      */
@@ -33,7 +35,7 @@ public class ArrayTest {
         // place numbers at the exact position
         for (int i = 0; i < nums.length; i++) {
 
-            while (nums[i] > 0 && nums[i] < nums.length && nums[i]!=nums[nums[i]-1]) {
+            while (nums[i] > 0 && nums[i] < nums.length && nums[i] != nums[nums[i] - 1]) {
 
                 int toBeSwap = nums[i];
                 nums[i] = nums[nums[i] - 1];
@@ -53,14 +55,14 @@ public class ArrayTest {
             firstMissNumber++;
         }
         // returning if every number is present
-        return nums.length+1;
+        return nums.length + 1;
     }
 
     public static class Interval {
         int start;
         int end;
 
-        public Interval(){
+        public Interval() {
 
         }
     }
@@ -119,30 +121,31 @@ public class ArrayTest {
 
     /**
      * To find max water trapped
+     *
      * @param heights
      * @return
      */
-    public static int maxWaterTrapped(int [] heights){
+    public static int maxWaterTrapped(int[] heights) {
 
         // will construct left and right max height standing at a building and will subtract current building height
 
         // net water trapped = Math.min(left,right) - currheight;
 
-        int [] leftMax = new int[heights.length];
-        int [] rightMax = new int[heights.length];
+        int[] leftMax = new int[heights.length];
+        int[] rightMax = new int[heights.length];
 
         // A = [1,8,6,2,5,4,8,3,7]
         leftMax[0] = heights[0];
 
-        for(int i=1;i<heights.length;i++){
-            leftMax[i] = Math.max(leftMax[i-1],heights[i]);
+        for (int i = 1; i < heights.length; i++) {
+            leftMax[i] = Math.max(leftMax[i - 1], heights[i]);
         }
 
 
-        rightMax[heights.length-1] = heights[heights.length-1];
+        rightMax[heights.length - 1] = heights[heights.length - 1];
 
-        for(int i=heights.length-2;i>=0;i--){
-            rightMax[i] = Math.max(rightMax[i+1],heights[i]);
+        for (int i = heights.length - 2; i >= 0; i--) {
+            rightMax[i] = Math.max(rightMax[i + 1], heights[i]);
         }
 
         //            [0,1,0,2,1,0,1,3,2,1,2,1]
@@ -151,14 +154,15 @@ public class ArrayTest {
         // water trap= 0 0 1 0 1 2 1 0 0 1 0 0
         int totalWaterTrapped = 0;
 
-        for(int i=0;i<heights.length;i++){
-            totalWaterTrapped += Math.min(leftMax[i],rightMax[i]) - heights[i];
+        for (int i = 0; i < heights.length; i++) {
+            totalWaterTrapped += Math.min(leftMax[i], rightMax[i]) - heights[i];
         }
         return totalWaterTrapped;
     }
 
     /**
      * To find maxWaterBetweenContainers
+     *
      * @param heights
      * @return
      */
@@ -202,42 +206,43 @@ public class ArrayTest {
 
     /**
      * To print spiral matrix
+     *
      * @param nums
      */
-    public static void spiralMatrix(int [][] nums){
-        int rows = nums.length-1;
-        int cols = nums[0].length-1;
+    public static void spiralMatrix(int[][] nums) {
+        int rows = nums.length - 1;
+        int cols = nums[0].length - 1;
         int top = 0;
         int right = cols;
         int left = 0;
         int bottom = rows;
 
-        int []ret = new int[(rows+1)*(cols+1)];
-        int index =0;
+        int[] ret = new int[(rows + 1) * (cols + 1)];
+        int index = 0;
 
-        while(left<=right && top<=bottom){
+        while (left <= right && top <= bottom) {
             // left to right
-            for(int i=left;i<=right;i++){
+            for (int i = left; i <= right; i++) {
                 ret[index++] = nums[top][i];
             }
 
             top++;
             // top to bottom
-            for(int i=top;i<=bottom;i++){
+            for (int i = top; i <= bottom; i++) {
                 ret[index++] = nums[i][right];
             }
 
             right--;
 
             // right to left
-            for(int i=right;i>=left && top<=bottom;i--){
+            for (int i = right; i >= left && top <= bottom; i--) {
                 ret[index++] = nums[bottom][i];
             }
 
             bottom--;
 
             // bottom to top
-            for(int i=bottom;i>=top && left<=right;i--){
+            for (int i = bottom; i >= top && left <= right; i--) {
                 ret[index++] = nums[i][left];
             }
 
@@ -249,6 +254,7 @@ public class ArrayTest {
 
     /**
      * To find subMatrix for Q queries
+     *
      * @param nums
      * @param B
      * @param C
@@ -256,9 +262,9 @@ public class ArrayTest {
      * @param E
      * @return
      */
-    public static int[] subMatrixSum(int [][] nums,int [] B,int [] C ,int [] D,int []E) {
+    public static int[] subMatrixSum(int[][] nums, int[] B, int[] C, int[] D, int[] E) {
 
-        int [] subMatrixSum = new int[B.length];
+        int[] subMatrixSum = new int[B.length];
 
         // Brute force -> to do N^2 traversal for Q queries -> O(Q*(N^2))
 
@@ -283,11 +289,11 @@ public class ArrayTest {
         // rather than doing two iterations for calculating row sum and column
         // we can take a new array and construct that but increase space complexity to O(N^2)
 
-        int [][] dp = new int[nums.length+1][nums[0].length+1];
+        int[][] dp = new int[nums.length + 1][nums[0].length + 1];
 
-        for(int i =1;i< dp.length;i++){
-            for(int j=1;j<dp[i].length;j++){
-                dp[i][j] = dp[i-1][j] + dp[i][j-1] + nums[i-1][j-1] - dp[i-1][j-1];
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = 1; j < dp[i].length; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1] + nums[i - 1][j - 1] - dp[i - 1][j - 1];
             }
         }
 
@@ -323,13 +329,14 @@ public class ArrayTest {
 
     /**
      * To get k frequent elements
+     *
      * @param nums
      * @param k
      * @return
      */
-    public static List<Integer> freqElements(int [] nums, int k) {
+    public static List<Integer> freqElements(int[] nums, int k) {
 
-        List<Integer>[] bucket = new List[nums.length+1];
+        List<Integer>[] bucket = new List[nums.length + 1];
 
         Map<Integer, Integer> map = new HashMap<>();
 
@@ -365,36 +372,37 @@ public class ArrayTest {
 
     /**
      * https://leetcode.com/problems/replace-elements-with-greatest-element-on-right-side/
-     *
+     * <p>
      * Given an array arr, replace every element in that array with the greatest element among the elements to its right, and replace the last element with -1.
-     *
+     * <p>
      * After doing so, return the array.
+     *
      * @param arr
      * @return
      */
     public int[] replaceElements(int[] arr) {
 
         // This the new algo that I have come up with though it is more space consuming
-        int [] ret = new int[arr.length];
+        int[] ret = new int[arr.length];
 
-        ret[arr.length-1] = -1;
+        ret[arr.length - 1] = -1;
 
         Stack<Integer> numStack = new Stack<>();
-        numStack.push(arr[arr.length-1]);
+        numStack.push(arr[arr.length - 1]);
 
         //Input: arr = [17,18,5,4,6,1]
         //Output: [18,6,6,6,1,-1]
 
-        for(int i=arr.length-2;i>=0;i--){
+        for (int i = arr.length - 2; i >= 0; i--) {
 
             ret[i] = numStack.peek();
 
             // emptying the stack to keep the greater element on the right
-            while(!numStack.isEmpty() && arr[i] > numStack.peek()){
+            while (!numStack.isEmpty() && arr[i] > numStack.peek()) {
                 numStack.pop();
             }
 
-            if(numStack.isEmpty()){
+            if (numStack.isEmpty()) {
                 numStack.push(arr[i]);
             }
         }
@@ -410,5 +418,6 @@ public class ArrayTest {
                          {4,9}};
 
         System.out.println(freqElements(new int[]{1,1,1,1,1},2));
+
     }
 }
