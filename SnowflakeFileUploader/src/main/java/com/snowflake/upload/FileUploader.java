@@ -2,6 +2,8 @@ package com.snowflake.upload;
 
 import net.snowflake.client.jdbc.SnowflakeResultSetV1;
 import net.snowflake.client.jdbc.internal.apache.commons.io.FilenameUtils;
+import org.anarres.parallelgzip.ParallelGZIPEnvironment;
+import org.anarres.parallelgzip.ParallelGZIPOutputStream;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -74,7 +76,8 @@ public class FileUploader {
             long startTime = System.currentTimeMillis();
 
             for (String localFilePath : filesLocalPath) {
-                Uploader uploader = new Uploader(connection, localFilePath, Integer.valueOf(parallelThreads), stageName, schemaName);
+                Uploader uploader = new Uploader(connection, localFilePath,
+                        Integer.valueOf(parallelThreads), stageName, schemaName, false);
                 futures.add(threadPool.submit(uploader));
             }
 
@@ -109,6 +112,12 @@ public class FileUploader {
         }
     }
 
+    static void zipFile(){
+
+//        ParallelGZIPOutputStream outputStream = new ParallelGZIPOutputStream(null);
+
+    }
+
 
     static class Uploader implements Callable<String> {
 
@@ -117,27 +126,35 @@ public class FileUploader {
         String schemaName;
         String stageName;
         Integer parallelThreads;
+        boolean isBulkUpload;
 
-        Uploader(Connection connection, String localPath, Integer parallelThreads, String stageName, String schemaName) {
+        Uploader(Connection connection, String localPath,
+                 Integer parallelThreads, String stageName,
+                 String schemaName,
+                 boolean isBulkUpload
+        ) {
             this.connection = connection;
             this.localPath = localPath;
             this.parallelThreads = parallelThreads;
             this.schemaName = schemaName;
             this.stageName = stageName;
+            this.isBulkUpload = isBulkUpload;
         }
 
         @Override
         public String call() throws Exception {
             long startTime = System.currentTimeMillis();
-            bulkUpload(localPath, parallelThreads);
+            upload(localPath, parallelThreads);
             long endTime = System.currentTimeMillis() - startTime;
             System.out.println("Total Bulk Time taken in ms by Thread : " + Thread.currentThread().getName() + " is " + endTime);
             return "DONE";
         }
 
-        private void bulkUpload(String localPath, Integer parallelThreads) throws SQLException {
-            String bulkLocalPath = getBulkLoadPath(localPath);
-            String putQuery = getPutQuery(bulkLocalPath, parallelThreads);
+        private void upload(String localPath, Integer parallelThreads) throws SQLException {
+            if (isBulkUpload) {
+                localPath = getBulkLoadPath(localPath);
+            }
+            String putQuery = getPutQuery(localPath, parallelThreads);
             executeUploadSql(putQuery);
         }
 
@@ -185,77 +202,6 @@ public class FileUploader {
         }
     }
 
-    //    static String getPutQuery(String localFilePath, Integer parallelThreads) {
-//        String compress = "AUTO_COMPRESS=false";
-//        String parallel = "";
-//        if (parallelThreads != null) {
-//            parallel = String.format("PARALLEL=%d", parallelThreads);
-//        }
-//        String desiredFilePath = FilenameUtils.separatorsToUnix(localFilePath);
-//
-//        return String.format("PUT 'file://%s' '@\"GEETHA\".\"sasas\"/OracleSnowFlakeUnloadPerfOptimisation_100119/LINEITEM_SF1' %s %s OVERWRITE=TRUE", desiredFilePath, compress, parallel);
-//    }
-//
-//    public static void uploadFiles(String uploadType, String localPath) throws SQLException, IOException {
-//
-//        long startTime = System.currentTimeMillis();
-//
-//        switch (uploadType) {
-//
-//            case "BULK":
-//                bulkUpload(localPath);
-//                break;
-//
-//            case "SINGLE":
-//                singleUpload(localPath);
-//                break;
-//
-//            case "MERGE":
-//                mergeUpload(localPath);
-//                break;
-//        }
-//
-//        long endTime = (System.currentTimeMillis() - startTime) / 1000;
-//        System.out.println("Time Taken using Upload type :" + uploadType + " is : " + endTime);
-//    }
-//
-//    private static void mergeUpload(String localPath) throws SQLException, IOException {
-//        File[] files = new File(localPath).listFiles();
-//        String[] filePaths = Arrays.stream(files).map(File::getAbsolutePath).toArray(String[]::new);
-//        String mergedCsvPath = localPath + UUID.randomUUID() + "_merged.csv";
-//        mergeCSVFiles(filePaths, mergedCsvPath);
-//        executeUploadSql(mergedCsvPath);
-//    }
-//
-//    private static void singleUpload(String localPath) throws SQLException {
-//        File[] files = new File(localPath).listFiles();
-//        for (File file : files) {
-//            String putQuery = getPutQuery(file.getPath(), null);
-//            executeUploadSql(putQuery);
-//        }
-//    }
-//
-//    private static void bulkUpload(String localPath) throws SQLException {
-//        String bulkLocalPath = getBulkLoadPath(localPath);
-//        String putQuery = getPutQuery(bulkLocalPath, 10);
-//        executeUploadSql(putQuery);
-//    }
-//
-//    private static String getBulkLoadPath(String actualLocalFilePath) {
-//        String pattern = "/[^/]*$";
-//        String replacement = "/*";
-//        return actualLocalFilePath.replaceAll(pattern, replacement);
-//    }
-//
-//    private static void executeUploadSql(String sqlCommand) throws SQLException {
-//        ResultSet resultSet = executeSql(sqlCommand);
-//        final Map<String, Integer> rsColNames = getResultSetColumnNames(resultSet);
-//        if (resultSet.next()) {
-//            final String status = resultSet.getString(rsColNames.get("status"));
-//            System.out.println("File Upload status for PUT command : " + sqlCommand + " is : " + status);
-//        }
-//    }
-//
     private static ResultSet executeSql(String sqlCommand) throws SQLException {
         System.out.println("Executing Query : " + sqlCommand);
         return connection.createStatement().executeQuery(sqlCommand);

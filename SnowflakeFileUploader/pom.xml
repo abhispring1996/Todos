@@ -47,6 +47,12 @@
             <version>2.3.1</version> <!-- Use the latest version available -->
         </dependency>
 
+        <dependency>
+            <groupId>org.anarres</groupId>
+            <artifactId>parallelgzip</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>
