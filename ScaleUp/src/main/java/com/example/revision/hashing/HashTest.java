@@ -1,5 +1,9 @@
 package com.example.revision.hashing;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class HashTest {
 
@@ -77,9 +82,7 @@ public class HashTest {
             }
             elementsSet.add(i);
         }
-
         return false;
-
     }
 
     /**
@@ -87,28 +90,61 @@ public class HashTest {
      * @param words
      * @return
      */
-    public static List<List<String>> groupAnagrams(String [] words){
+    public static List<List<String>> groupAnagrams(String [] words) {
 
-        Map<String,List<String>> map = new HashMap<>();
-        // TC : O(ArrayLen*wordLen)
-        for(String word : words){
+        Map<String, List<String>> map = new HashMap<>();
+        // TC : O(ArrayLen*wordLen*26(Time taken to perform hashing operations of hash and equals))
+        char[] freq = new char[26];
+        for (String word : words) {
 
-            char [] freq = new char[26];
             // will create a key using the freq array
-            for(char c : word.toCharArray()){
-                freq[c-'a']++;
+            for (char c : word.toCharArray()) {
+                freq[c - 'a']++;
             }
             String key = new String(freq);
-            List<String> anagramList = map.getOrDefault(key,new ArrayList<>());
+            List<String> anagramList = map.getOrDefault(key, new ArrayList<>());
             anagramList.add(word);
-            map.put(key,anagramList);
+            map.put(key, anagramList);
         }
         return new ArrayList<>(map.values());
     }
 
+    public static boolean containsDuplicate(int[] nums) {
 
+        Set<Integer> numsSet = new HashSet<>();
+
+        for (int i : nums) {
+
+            if (!numsSet.add(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     public static void main(String[] args) {
-        System.out.println(groupAnagrams(new String[]{"eat","tea","tan","ate","nat","bat"}));
+//        System.out.println(groupAnagrams(new String[]{"eat","tea","tan","ate","nat","bat"}));
+//        containsDuplicate(new int[]{1,2,3,4,1});
+
+        Path directory = Paths.get("C:\\SnowflakeUploadFiles\\OneChunkUpload\\Group_of_5\\1/");
+
+        try {
+            List<Path> filePaths = Files.walk(directory)
+                    .filter(Files::isRegularFile)
+                    .collect(Collectors.toList());
+
+            // Print all file paths
+            for (Path path : filePaths) {
+                System.out.println(path);
+            }
+        } catch (IOException e) {
+//            e.printStackTrace();
+        }
+        Set<String> set = new HashSet<String>(){{
+            add("add");
+            add("subtract");
+        }};
+        System.out.println(set);
     }
 }
