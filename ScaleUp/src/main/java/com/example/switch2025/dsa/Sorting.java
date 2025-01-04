@@ -99,11 +99,12 @@ public class Sorting {
         int[] ret = new int[k];
         int retIndex = 0;
         int index = bucket.length - 1;
+
         while (index > 0) {
-            if (null != bucket[index] && !CollectionUtils.isEmpty(bucket[index].getElements())) {
+            if (null != bucket[index]) {
                 for (Integer element : bucket[index].getElements()) {
 
-                    if (retIndex == ret.length) {
+                    if (retIndex == k) {
                         return ret;
                     }
                     ret[retIndex] = element;
