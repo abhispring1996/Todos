@@ -22,6 +22,8 @@ public class CurrentStatsDisplay implements Observer, Display {
         this.pressure = weatherData.getPressure();
         this.temperature = weatherData.getTemperature();
         this.humidity = weatherData.getHumidity();
+
+        display();
     }
 
     @Override
