@@ -1,7 +1,5 @@
 package com.example.switch2025.dsa;
 
-import org.springframework.util.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
