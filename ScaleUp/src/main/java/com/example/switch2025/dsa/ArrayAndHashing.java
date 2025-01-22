@@ -1,6 +1,7 @@
 package com.example.switch2025.dsa;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,4 +98,63 @@ public class ArrayAndHashing {
 
         return -1;
     }
+
+    public static List<Integer> findAllDuplicatesInTheArray(int[] nums) {
+        List<Integer> duplicatesList = new ArrayList<>();
+        //4,3,2,7,8,2,3,1
+        for (int num : nums) {
+            // since the values in the array will in the range [1,n] so we can basically mark their
+            // positions on the array
+            int currElement = Math.abs(num);
+            int elementPosition = currElement - 1;
+
+            if (nums[elementPosition] < 0) {
+                // this means the element is duplicate as it was already marked negative
+                duplicatesList.add(currElement);
+            }
+            nums[elementPosition] *= -1;
+        }
+
+        return duplicatesList;
+    }
+
+    private int[] uniqueNumbers(int[] nums) {
+        int xorResult = 0;
+
+        for (int num : nums) {
+            xorResult ^= num;
+        }
+
+        // this will have the xor result of unique elements // 1,2,1,3,2,5 -> 3^5
+        // we need to find put the unique elements in separate groups
+        // this can be done by identifying the first set bit in the XOR result
+        // which indicates that bit will be set in either of 3 or 5
+
+        int differenceBit = 1;
+
+        while ((differenceBit & xorResult) == 0) {
+            // will try with different numbers starting from 1
+            differenceBit = differenceBit << 1;
+        }
+
+        int firstNumber = 0;
+        int secondNumber = 0;
+
+        for (int num : nums) {
+            // in this way, both unique element will get XORed separately
+            if ((differenceBit & num) == 0) {
+                firstNumber ^= num;
+            } else {
+                secondNumber ^= num;
+            }
+        }
+
+        return new int[]{firstNumber, secondNumber};
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Duplicates are: " + findAllDuplicatesInTheArray(new int[]{4, 3, 2, 7, 8, 2, 3, 1}));
+    }
+
+
 }
