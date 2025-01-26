@@ -1,6 +1,7 @@
 package com.example.switch2025.dsa;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -152,8 +153,62 @@ public class ArrayAndHashing {
         return new int[]{firstNumber, secondNumber};
     }
 
+    public static int[] searchRange(int[] nums, int target) {
+        int firstPosition = findFirstPosition(nums, target);
+        int secondPosition = findLastPosition(nums, target);
+        return new int[]{firstPosition, secondPosition};
+    }
+
+    private static int findFirstPosition(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+
+        while (low <= high) {
+
+            int mid = (low + high) / 2;
+
+            if (nums[mid] == target) {
+                if (mid == 0 || nums[mid - 1] != target) {
+                    return mid;
+                } else {
+                    high = mid - 1;
+                }
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return -1;
+    }
+
+    private static int findLastPosition(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+
+        while (low <= high) {
+
+            int mid = (low + high) / 2;
+
+            if (nums[mid] == target) {
+                if (mid == nums.length - 1 || nums[mid + 1] != target) {
+                    return mid;
+                } else {
+                    low = mid + 1;
+                }
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return -1;
+    }
+
     public static void main(String[] args) {
-        System.out.println("Duplicates are: " + findAllDuplicatesInTheArray(new int[]{4, 3, 2, 7, 8, 2, 3, 1}));
+        System.out.println("First and Last Positions are: " + Arrays.toString(searchRange(new int[]{5, 7, 7, 8, 8, 10}, 8)));
     }
 
 
