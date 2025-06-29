@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FileLogAppender implements ILogAppender {
+    private ILogAppender next;
     private final String filePath;
     private FileWriter fileWriter;
 
@@ -20,12 +21,17 @@ public class FileLogAppender implements ILogAppender {
     }
 
     @Override
-    public void append(LogMessage message) {
+    public synchronized void append(LogMessage message) {
         try {
             fileWriter.append(String.valueOf(message)).append("\n");
             fileWriter.flush();
         } catch (IOException e) {
             // handle exception
         }
+    }
+
+    @Override
+    public void setNext(ILogAppender appender) {
+        // no to do anything
     }
 }
