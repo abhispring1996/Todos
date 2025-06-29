@@ -29,11 +29,11 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>net.snowflake</groupId>
-            <artifactId>snowflake-jdbc</artifactId>
-            <version>3.13.30</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>net.snowflake</groupId>-->
+<!--            <artifactId>snowflake-jdbc</artifactId>-->
+<!--            <version>3.13.30</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -48,10 +48,17 @@
         </dependency>
 
         <dependency>
-            <groupId>org.anarres</groupId>
-            <artifactId>parallelgzip</artifactId>
-            <version>1.0.5</version>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>11.2.0.jre8</version>
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.informatica.datadirect</groupId>-->
+<!--            <artifactId>dwsqlserver</artifactId>-->
+<!--            <version>6.0.0.001765</version>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
 
     </dependencies>
 

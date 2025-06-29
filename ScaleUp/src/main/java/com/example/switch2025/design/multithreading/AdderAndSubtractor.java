@@ -23,7 +23,7 @@ public class AdderAndSubtractor {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-
+        executorService.shutdownNow();
         System.out.println("Final Value after AdderSubtractor Processing is " + counter.getValue());
     }
 }
