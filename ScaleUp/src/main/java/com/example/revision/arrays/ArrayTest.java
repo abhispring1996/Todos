@@ -410,14 +410,33 @@ public class ArrayTest {
         return ret;
     }
 
+    public static int minSubArrayLen(int target, int[] nums) {
+        int left = 0;
+        int right = 0;
+        int minSubArrayLen = Integer.MAX_VALUE;
+        int currSum = nums[0];
+
+        // [2,3,1,2,4,3]
+        while (right < nums.length) {
+            currSum += nums[right];
+
+            while (currSum >= target) {
+                minSubArrayLen = Math.min(minSubArrayLen, right-left+1);
+                currSum -= nums[left];
+                left++;
+            }
+            right++;
+        }
+
+        return minSubArrayLen;
+    }
 
     public static void main(String[] args) {
 
-        int [][] nums = {{7,3},
-                         {2,1},
-                         {4,9}};
+        int[][] nums = {{7, 3},
+                {2, 1},
+                {4, 9}};
 
-        System.out.println(freqElements(new int[]{1,1,1,1,1},2));
-
+        System.out.println(minSubArrayLen(7, new int[]{2, 3, 1, 2, 4, 3}));
     }
 }

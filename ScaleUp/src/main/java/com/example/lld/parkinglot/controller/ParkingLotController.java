@@ -22,22 +22,22 @@ public class ParkingLotController {
 
        CreateParkingLotResponseDto response = new CreateParkingLotResponseDto();
 
-        if(request.getNoOfFloors()<2){
-            response.setResponseStatus(ResponseStatus.FAILURE);
-            return response;
-        }
-        ParkingLot parkingLot = new ParkingLot();
-        parkingLot.setAddress(request.getAddress());
-        List<ParkingFloor> parkingFloorList = new ArrayList<>();
-
-        for(int i=0;i<request.getNoOfFloors();i++){
-            parkingFloorList.add(new ParkingFloor());
-        }
-        parkingLot.setParkingFloorList(parkingFloorList);
-
-        ParkingLot parkingLotResponse =  parkingLotService.createParkingLot(parkingLot);
-        response.setParkingLot(parkingLotResponse);
-        response.setResponseStatus(ResponseStatus.SUCCESS);
+//        if(request.getNoOfFloors()<2){
+//            response.setResponseStatus(ResponseStatus.FAILURE);
+//            return response;
+//        }
+//        ParkingLot parkingLot = new ParkingLot();
+//        parkingLot.setAddress(request.getAddress());
+//        List<ParkingFloor> parkingFloorList = new ArrayList<>();
+//
+//        for(int i=0;i<request.getNoOfFloors();i++){
+//            parkingFloorList.add(new ParkingFloor());
+//        }
+//        parkingLot.setParkingFloorList(parkingFloorList);
+//
+//        ParkingLot parkingLotResponse =  parkingLotService.createParkingLot(parkingLot);
+//        response.setParkingLot(parkingLotResponse);
+//        response.setResponseStatus(ResponseStatus.SUCCESS);
         return response;
     }
 
