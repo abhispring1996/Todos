@@ -7,79 +7,80 @@ import java.util.Map;
  * For designing LRU Cache we need a data structure which checks Cache miss or hit in constant time -> Map and
  * data structure where we can attach and detach the elements in constant time -> Doubly Linked List
  */
-public class LRUCache {
-    Map<Object, DoublyLinkedNode> valueToDoublyLinkedNodeMap = new HashMap<>();
-    DoublyLinkedNode head;
-    DoublyLinkedNode tail;
-    int capacity;
+public class LRUCache<K, V> {
+    private final Map<K, DoublyLinkedNode> map = new HashMap<>();
+    private final DoublyLinkedNode head;
+    private final DoublyLinkedNode tail;
+    private final int capacity;
 
     public LRUCache(int capacity) {
         this.capacity = capacity;
+        head = new DoublyLinkedNode(null, null);
+        tail = new DoublyLinkedNode(null, null);
+        head.next = tail;
+        tail.prev = head;
     }
 
-    public void put(Object key, Object value) {
-
-        if (valueToDoublyLinkedNodeMap.containsKey(key)) {
-            DoublyLinkedNode existingNode = valueToDoublyLinkedNodeMap.get(key);
+    public void put(K key, V value) {
+        if (map.containsKey(key)) {
+            DoublyLinkedNode existingNode = map.get(key);
             existingNode.value = value;
             moveToFront(existingNode);
         } else {
-            if (valueToDoublyLinkedNodeMap.size() == capacity) {
+            if (map.size() == capacity) {
                 removeLast();
             }
             DoublyLinkedNode newNode = new DoublyLinkedNode(key, value);
             addToFront(newNode);
-            valueToDoublyLinkedNodeMap.put(key, newNode);
+            map.put(key, newNode);  // only insert in map here
         }
     }
 
-    /**
-     * It involves detaching the currentNode and adding it to Front
-     *
-     * @param existingNode
-     */
-    private void moveToFront(DoublyLinkedNode existingNode) {
+    public V get(K key) {
+        if (!map.containsKey(key)) {
+            return null;
+        }
+        DoublyLinkedNode node = map.get(key);
+        moveToFront(node);
+        return node.value;
     }
 
-    /**
-     * it removes the last element
-     */
+    private void moveToFront(DoublyLinkedNode node) {
+        // Detach node
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+        // Attach at front
+        addToFront(node);
+    }
+
+    private void addToFront(DoublyLinkedNode node) {
+        node.next = head.next;
+        node.prev = head;
+        head.next.prev = node;
+        head.next = node;
+        // No map update here
+    }
+
     private void removeLast() {
-
-    }
-
-    /**
-     * It adds element to the head of the Linked List.
-     *
-     * @param newNode
-     */
-    private void addToFront(DoublyLinkedNode newNode) {
-        newNode.next = head;
-        head.prev = newNode;
-        head = newNode;
-    }
-
-    public Object get(int key) {
-        if (valueToDoublyLinkedNodeMap.containsKey(key)) {
-            DoublyLinkedNode currNode = valueToDoublyLinkedNodeMap.get(key);
-            moveToFront(currNode);
-            return currNode.value;
+        if (tail.prev == head) {
+            return; // No elements
         }
-        return null;
+        DoublyLinkedNode last = tail.prev;
+        last.prev.next = tail;
+        tail.prev = last.prev;
+        map.remove(last.key);
     }
 
-    public class DoublyLinkedNode {
-        Object key;
-        Object value;
+    private class DoublyLinkedNode {
+        K key;
+        V value;
         DoublyLinkedNode prev;
         DoublyLinkedNode next;
 
-        public DoublyLinkedNode(Object key, Object value) {
+        DoublyLinkedNode(K key, V value) {
             this.key = key;
             this.value = value;
-            this.prev = null;
-            this.next = null;
         }
     }
-
 }
+
