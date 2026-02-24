@@ -3,7 +3,6 @@ package com.data.fetcher;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.time.Duration;
 import java.time.Instant;
 
 public class LatencyChecker {
