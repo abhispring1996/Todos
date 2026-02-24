@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+// SnowpipeDataLoader simulates a high-throughput data loading scenario using Snowflake's streaming ingest API.
 public class SnowpipeDataLoader {
     private final static String database = "DBMI_DB1";
     private final static String schemaName = "GEETHA";
